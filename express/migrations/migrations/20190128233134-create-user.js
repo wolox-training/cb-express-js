@@ -9,7 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      lastName: {
+      fisrt_name: {
+        type: Sequelize.STRING
+      },
+      last_name: {
         type: Sequelize.STRING
       },
       email: {
@@ -18,11 +21,11 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
