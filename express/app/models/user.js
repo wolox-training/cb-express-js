@@ -1,5 +1,7 @@
 'use strict';
 
+const bcrypt = require('bcryptjs');
+
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define(
     'user',
@@ -12,8 +14,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       firstName: { allowNul: false, type: DataTypes.STRING, field: 'first_name' },
       lastName: { allowNul: false, type: DataTypes.STRING, field: 'last_name' },
-      email: { allowNul: false, type: DataTypes.STRING, unique: true },
-      password: { allowNul: false, type: DataTypes.STRING }
+      email: {
+        allowNul: false,
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: true,
+          isDomainValid: value => {
+            if (!value.match(/^[\w_.]*$@wolox.com.ar/))
+              throw new Error('This domain does not belong to Wolox');
+          }
+        }
+      },
+      password: { allowNul: false, type: DataTypes.STRING, validate: { isAlphanumeric: true, len: [8, 24] } }
     },
     {}
   );
