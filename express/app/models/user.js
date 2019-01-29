@@ -28,7 +28,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: { allowNul: false, type: DataTypes.STRING, validate: { isAlphanumeric: true, len: [8, 24] } }
     },
-    {}
+    {
+      hooks: {
+        beforeCreate: ({ password }) => {
+          const salt = bcrypt.genSaltSync();
+          user.password = bcrypt.hashSync(password, salt);
+        }
+      }
+    }
   );
   user.associate = function(models) {
     // associations can be defined here
