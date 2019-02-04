@@ -13,8 +13,9 @@ exports.create = (req, res) =>
     return userService
       .create(fields)
       .then(newUser => {
-        logger.info(`The user ${newUser} was successfully created`);
-        res.status(201).send(newUser);
+        const user = { id: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName };
+        logger.info(`The user ${user} was successfully created`);
+        res.status(201).send(user);
       })
       .catch(error => {
         logger.error(`Failed to create user. ${error}`);
