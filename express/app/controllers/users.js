@@ -18,6 +18,6 @@ exports.create = (req, res) =>
       })
       .catch(error => {
         logger.error(`Failed to create user. ${error}`);
-        res.status(400).send(error);
+        res.status(400).send(error.toString());
       });
   });

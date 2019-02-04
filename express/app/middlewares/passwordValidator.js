@@ -1,4 +1,4 @@
-const errors = require('../errors');
+const errors = require('./errors');
 
 const isAlphanumeric = string => string.match(/^[a-zA-Z0-9]+$/);
 
@@ -6,7 +6,7 @@ const isValidPassword = password => password.length >= 8 && password.length <= 2
 
 exports.handle = (req, res, next) => {
   if (!isValidPassword(req.body.password)) {
-    next(errors.defaultError('Invalid password'));
+    errors.handle('Invalid password', req, res, next);
   }
   next();
 };
