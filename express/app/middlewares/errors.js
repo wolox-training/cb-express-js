@@ -10,10 +10,9 @@ const statusCodes = {
   [errors.SAVING_ERROR]: 400,
   [errors.DATABASE_ERROR]: 503,
   [errors.DEFAULT_ERROR]: 500,
-  [errors.INVALID_EMAIL]: 400,
-  [errors.INVALID_PASSWORD]: 400,
-  [errors.MISSING_FIELDS]: 400,
-  [errors.EMAIL_ALREADY_EXISTS]: 400
+  [errors.EMAIL_ALREADY_EXISTS]: 400,
+  [errors.INVALID_FIELDS]: 400,
+  [errors.CREATION_FAILED]: 400
 };
 
 exports.handle = (error, req, res, next) => {

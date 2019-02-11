@@ -2,7 +2,8 @@ const user = require('../models').user,
   userService = require('../services/userService'),
   errors = require('../errors'),
   logger = require('../logger'),
-  bcrypt = require('bcryptjs');
+  bcrypt = require('bcryptjs'),
+  { userCreationSerializer, userSerializer } = require('../serializers/userSerializer');
 
 const encryptPassword = ({ password }) => {
   const salt = bcrypt.genSaltSync();
@@ -10,22 +11,23 @@ const encryptPassword = ({ password }) => {
 };
 
 exports.create = (req, res, next) =>
-  user.findOne({ where: { email: req.body.email } }).then(userInstances => {
-    if (userInstances) {
+  user.findOne({ where: { email: req.body.email } }).then(userInstance => {
+    if (userInstance) {
       next(errors.emailAlreadyExists('The email already exists'));
     } else {
-      return encryptPassword(req.body).then(hashedPassword => {
-        const fields = { ...req.body, password: hashedPassword };
+      const usr = userCreationSerializer(req.body);
+      return encryptPassword(usr).then(hashedPassword => {
+        const fields = { ...usr, password: hashedPassword };
         return userService
           .create(fields)
           .then(newUser => {
-            const User = { id: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName };
-            logger.info(`The user ${User} was successfully created`);
-            res.status(201).send(user);
+            const User = userSerializer(newUser);
+            logger.info(`The user ${JSON.stringify(User)} was successfully created`);
+            res.status(201).send(User);
           })
           .catch(error => {
             logger.error(`Failed to create user. ${error}`);
-            res.status(400).send(error.toString());
+            next(errors.creationFailed(error.toString()));
           });
       });
     }

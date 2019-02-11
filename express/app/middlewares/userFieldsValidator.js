@@ -1,13 +1,16 @@
 const errors = require('../errors'),
-  { checkSchema, validationResult } = require('express-validator/check'),
+  { validationResult, checkSchema } = require('express-validator/check'),
   { userCreationSchema } = require('../schemas/user');
 
-const requiredFields = ['firstName', 'lastName', 'email', 'password'];
-
-exports.handle = (req, res, next) => {
-  const missingFields = requiredFields.filter(field => !req.body[field]);
-  if (missingFields.length > 0) {
-    next(errors.missingFields(`${missingFields} field missing`));
+exports.handle = [
+  checkSchema(userCreationSchema),
+  (req, res, next) => {
+    const valErrors = validationResult(req);
+    if (!valErrors.isEmpty()) {
+      const mappedErrors = valErrors.mapped();
+      const errs = Object.keys(mappedErrors).map(key => ({ [key]: mappedErrors[key].msg }));
+      next(errors.invalidFields(errs));
+    }
+    next();
   }
-  next();
-};
+];
