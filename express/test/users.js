@@ -13,6 +13,16 @@ const missingFieldsUser = { first_name: correctUser.first_name, email: correctUs
 const invalidPassUser = { ...correctUser, password: '!@#$' };
 
 describe('/users POST', () => {
+  it('should successfully create a user', () =>
+    chai
+      .request(server)
+      .post('/users')
+      .send(correctUser)
+      .then(res => {
+        expect(res).to.have.status(201);
+        expect(res).to.be.json;
+        dictum.chai(res, 'Endpoint for user creation');
+      }));
   it('should fail, email already exists', () =>
     chai
       .request(server)
