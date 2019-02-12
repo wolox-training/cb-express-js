@@ -13,22 +13,22 @@ const encryptPassword = ({ password }) => {
 exports.create = (req, res, next) =>
   user.findOne({ where: { email: req.body.email } }).then(userInstance => {
     if (userInstance) {
-      next(errors.emailAlreadyExists('The email already exists'));
-    } else {
-      const usr = userCreationSerializer(req.body);
-      return encryptPassword(usr).then(hashedPassword => {
-        const fields = { ...usr, password: hashedPassword };
-        return userService
-          .create(fields)
-          .then(newUser => {
-            const User = userSerializer(newUser);
-            logger.info(`The user ${JSON.stringify(User)} was successfully created`);
-            res.status(201).send(User);
-          })
-          .catch(error => {
-            logger.error(`Failed to create user. ${error}`);
-            next(errors.creationFailed(error.toString()));
-          });
-      });
+      return next(errors.emailAlreadyExists('The email already exists'));
     }
+    const usr = userCreationSerializer(req.body);
+    return encryptPassword(usr).then(hashedPassword => {
+      const fields = { ...usr, password: hashedPassword };
+      return userService
+        .create(fields)
+        .then(newUser => {
+          const User = userSerializer(newUser);
+          logger.info(`The user ${JSON.stringify(User)} was successfully created`);
+          res.status(201).send(User);
+        })
+        .catch(next);
+      // .catch(error => {
+      //   logger.error(`Failed to create user. ${error}`);
+      //   next(errors.creationFailed(error.toString()));
+      // });
+    });
   });
