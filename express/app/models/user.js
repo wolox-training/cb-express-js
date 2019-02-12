@@ -12,10 +12,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       firstName: { allowNul: false, type: DataTypes.STRING, field: 'first_name' },
       lastName: { allowNul: false, type: DataTypes.STRING, field: 'last_name' },
-      email: { allowNul: false, type: DataTypes.STRING, unique: true },
+      email: {
+        allowNul: false,
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
       password: { allowNul: false, type: DataTypes.STRING }
     },
-    {}
+    {
+      underscored: true
+    }
   );
   user.associate = function(models) {
     // associations can be defined here
