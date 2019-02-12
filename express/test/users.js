@@ -13,42 +13,37 @@ const missingFieldsUser = { first_name: correctUser.first_name, email: correctUs
 const invalidPassUser = { ...correctUser, password: '!@#$' };
 
 describe('/users POST', () => {
-  it('should successfully create a user', () =>
-    chai
-      .request(server)
-      .post('/users')
-      // .set('content-type', 'application/json')
-      .send(correctUser)
-      .then(res => {
-        expect(res).to.have.status(200);
-        expect(res).to.be.json;
-        dictum.chai(res, 'Endpoint for user creation');
-      })
-      .catch(err => {
-        throw err;
-      }));
   it('should fail, email already exists', () =>
     chai
       .request(server)
       .post('/users')
       .send(correctUser)
-      .catch(err => {
-        expect(err).to.have.status(400);
-      }));
+      .then(() =>
+        chai
+          .request(server)
+          .post('/users')
+          .send(correctUser)
+          .then(res => {
+            expect(res).to.have.status(400);
+            expect(res).to.be.json;
+          })
+      ));
   it('should fail, missing field', () =>
     chai
       .request(server)
       .post('/users')
       .send(missingFieldsUser)
-      .catch(err => {
-        expect(err).to.have.status(400);
+      .then(res => {
+        expect(res).to.have.status(400);
+        expect(res).to.be.json;
       }));
   it('should fail, invalid password', () =>
     chai
       .request(server)
       .post('/users')
       .send(invalidPassUser)
-      .catch(err => {
-        expect(err).to.have.status(400);
+      .then(res => {
+        expect(res).to.have.status(400);
+        expect(res).to.be.json;
       }));
 });
