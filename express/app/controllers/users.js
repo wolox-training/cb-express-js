@@ -26,9 +26,5 @@ exports.create = (req, res, next) =>
           res.status(201).send(User);
         })
         .catch(next);
-      // .catch(error => {
-      //   logger.error(`Failed to create user. ${error}`);
-      //   next(errors.creationFailed(error.toString()));
-      // });
     });
   });
