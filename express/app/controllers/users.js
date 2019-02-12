@@ -11,20 +11,18 @@ const encryptPassword = ({ password }) => {
 };
 
 exports.create = (req, res, next) =>
-  user.findOne({ where: { email: req.body.email } }).then(userInstance => {
-    if (userInstance) {
-      return next(errors.emailAlreadyExists('The email already exists'));
-    }
-    const usr = userCreationSerializer(req.body);
-    return encryptPassword(usr).then(hashedPassword => {
-      const fields = { ...usr, password: hashedPassword };
-      return userService
-        .create(fields)
-        .then(newUser => {
+  user
+    .findOne({ where: { email: req.body.email } })
+    .then(userInstance => {
+      if (userInstance) throw next(errors.emailAlreadyExists('The email already exists'));
+      const usr = userCreationSerializer(req.body);
+      return encryptPassword(usr).then(hashedPassword => {
+        const fields = { ...usr, password: hashedPassword };
+        return userService.create(fields).then(newUser => {
           const User = userSerializer(newUser);
           logger.info(`The user ${JSON.stringify(User)} was successfully created`);
           res.status(201).send(User);
-        })
-        .catch(next);
-    });
-  });
+        });
+      });
+    })
+    .catch(next);
