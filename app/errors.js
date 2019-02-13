@@ -14,3 +14,6 @@ exports.invalidFields = message => internalError(message, exports.INVALID_FIELDS
 
 exports.CREATION_FAILED = 'creation_failed';
 exports.creationFailed = message => internalError(message, exports.CREATION_FAILED);
+
+exports.DATABASE_ERROR = 'database_error';
+exports.databaseError = message => internalError(message, exports.DATABASE_ERROR);
