@@ -17,3 +17,6 @@ exports.creationFailed = message => internalError(message, exports.CREATION_FAIL
 
 exports.DATABASE_ERROR = 'database_error';
 exports.databaseError = message => internalError(message, exports.DATABASE_ERROR);
+
+exports.INVALID_CREDENTIALS = 'invalid_credentials';
+exports.invalidCredentials = message => internalError(message, exports.INVALID_CREDENTIALS);
