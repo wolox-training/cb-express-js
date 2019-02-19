@@ -65,18 +65,17 @@ describe('/users POST', () => {
 });
 
 describe('/users/sessions POST', () => {
+  beforeEach(() => createUser());
   it('should successfully login', () =>
-    createUser().then(() =>
-      chai
-        .request(server)
-        .post('/users/sessions')
-        .send({ email: correctUser.email, password: correctUser.password })
-        .then(res => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.have.property('token');
-        })
-    ));
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send({ email: correctUser.email, password: correctUser.password })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.have.property('token');
+      }));
   it('should fail to log in with empty or null email/password', () =>
     chai
       .request(server)
