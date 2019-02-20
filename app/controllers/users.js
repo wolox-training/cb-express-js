@@ -33,8 +33,8 @@ exports.create = (req, res, next) =>
     .catch(next);
 
 exports.logIn = (req, res, next) =>
-  user
-    .findOne({ where: { email: req.body.email } })
+  userService
+    .findUser(req.body.email)
     .then(userInstace => {
       if (!userInstace) throw errors.invalidCredentials('invalid email or password');
       return bcrypt.compare(req.body.password, userInstace.password).then(isValid => {
