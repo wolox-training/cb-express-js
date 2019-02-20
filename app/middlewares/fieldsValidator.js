@@ -1,9 +1,8 @@
 const errors = require('../errors'),
-  { validationResult, checkSchema } = require('express-validator/check'),
-  { userCreationSchema } = require('../schemas/user');
+  { validationResult, checkSchema } = require('express-validator/check');
 
-exports.handle = [
-  checkSchema(userCreationSchema),
+exports.handle = schema => [
+  checkSchema(schema),
   (req, res, next) => {
     const valErrors = validationResult(req);
     if (!valErrors.isEmpty()) {

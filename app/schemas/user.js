@@ -6,7 +6,7 @@ const LAST_NAME = 'last_name';
 const EMAIL = 'email';
 const PASSWORD = 'password';
 
-exports.userCreationSchema = {
+const userSchema = {
   [FIRST_NAME]: {
     in: ['body'],
     errorMessage: userCreationValidation.INVALID_FIELD(FIRST_NAME),
@@ -52,3 +52,7 @@ exports.userCreationSchema = {
     custom: { options: isValidPassword }
   }
 };
+
+exports.userCreationSchema = { ...userSchema };
+
+exports.userLoginSchema = { [EMAIL]: userSchema.email, [PASSWORD]: userSchema.password };
