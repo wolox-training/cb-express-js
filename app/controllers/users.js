@@ -7,9 +7,6 @@ const user = require('../models').user,
   jwt = require('jwt-simple'),
   { userCreationSerializer, userSerializer } = require('../serializers/userSerializer');
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 10;
-
 const encryptPassword = ({ password }) => {
   const salt = bcrypt.genSaltSync();
   return bcrypt.hash(password, salt);
@@ -46,17 +43,10 @@ exports.logIn = (req, res, next) =>
     })
     .catch(next);
 
-exports.list = (req, res, next) => {
-  const page = req.query.page || DEFAULT_PAGE;
-  const limit = req.query.limit || DEFAULT_LIMIT;
-  return user
-    .findAll({
-      attributes: ['id', 'firstName', 'lastName', 'email'],
-      offset: limit * (page - 1),
-      limit
-    })
+exports.list = (req, res, next) =>
+  userService
+    .usersList(req.query.page, req.query.limit)
     .then(users => {
       res.status(200).send({ users: users.map(userSerializer) });
     })
     .catch(next);
-};
