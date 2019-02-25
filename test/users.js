@@ -71,7 +71,7 @@ describe('/users POST', () => {
 });
 
 describe('/users/sessions POST', () => {
-  beforeEach(() => createUser());
+  beforeEach(() => createUser(correctUser));
   it('should successfully login', () =>
     chai
       .request(server)
