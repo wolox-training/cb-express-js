@@ -20,7 +20,12 @@ module.exports = (sequelize, DataTypes) => {
           isEmail: true
         }
       },
-      password: { allowNul: false, type: DataTypes.STRING }
+      password: { allowNul: false, type: DataTypes.STRING },
+      isAdmin: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      }
     },
     {
       underscored: true
