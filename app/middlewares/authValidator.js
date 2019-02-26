@@ -10,13 +10,12 @@ exports.handle = (req, res, next) => {
   try {
     decoded = jwt.decode(req.headers.token, config.common.session.secret);
   } catch (e) {
-    next(errors.invalidToken(authValidation.INVALID_TOKEN));
-    return;
+    return next(errors.invalidToken(authValidation.INVALID_TOKEN));
   }
-  User.findOne({ where: { email: decoded.email } })
+  return User.findOne({ where: { email: decoded.email } })
     .then(user => {
-      if (!user) throw errors.invalidAuthentication(authValidation.NOT_LOGGED_IN);
+      if (!user) next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
+      next();
     })
     .catch(next);
-  next();
 };
