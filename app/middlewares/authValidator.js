@@ -12,10 +12,10 @@ exports.handle = (req, res, next) => {
   } catch (e) {
     return next(errors.invalidToken(authValidation.INVALID_TOKEN));
   }
-  User.findOne({ where: { email: decoded.email } })
+  return User.findOne({ where: { email: decoded.email } })
     .then(user => {
       if (!user) next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
+      next();
     })
     .catch(next);
-  next();
 };
