@@ -5,7 +5,7 @@ const user = require('../models').user,
   config = require('../../config/index'),
   bcrypt = require('bcryptjs'),
   jwt = require('jwt-simple'),
-  { userCreationSerializer, userSerializer } = require('../serializers/userSerializer');
+  { userCreationSerializer, userSerializer, usersListSerializer } = require('../serializers/userSerializer');
 
 const encryptPassword = ({ password }) => {
   const salt = bcrypt.genSaltSync();
@@ -40,5 +40,13 @@ exports.logIn = (req, res, next) =>
         logger.info(`User ${userInstace.id} logged in`);
         res.status(200).send({ user: userSerializer(userInstace), token });
       });
+    })
+    .catch(next);
+
+exports.list = (req, res, next) =>
+  userService
+    .usersList(req.query.page, req.query.limit)
+    .then(users => {
+      res.status(200).send({ users: usersListSerializer(users) });
     })
     .catch(next);

@@ -20,3 +20,8 @@ exports.databaseError = message => internalError(message, exports.DATABASE_ERROR
 
 exports.INVALID_CREDENTIALS = 'invalid_credentials';
 exports.invalidCredentials = message => internalError(message, exports.INVALID_CREDENTIALS);
+
+exports.INVALID_AUTHENTICATION = 'invalid_authentication';
+exports.invalidAuthentication = message => internalError(message, exports.INVALID_AUTHENTICATION);
+
+exports.invalidToken = message => internalError(message, exports.INVALID_AUTHENTICATION);

@@ -11,3 +11,5 @@ exports.userSerializer = user => ({
   last_name: user.lastName,
   email: user.email
 });
+
+exports.usersListSerializer = users => users.map(exports.userSerializer);
