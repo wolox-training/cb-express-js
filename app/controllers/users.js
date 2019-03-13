@@ -12,14 +12,22 @@ const encryptPassword = ({ password }) => {
   return bcrypt.hash(password, salt);
 };
 
-exports.create = (req, res, next) =>
+exports.create = (isAdmin = false) => (req, res, next) =>
   user
     .findOne({ where: { email: req.body.email } })
     .then(userInstance => {
-      if (userInstance) throw next(errors.emailAlreadyExists('The email already exists'));
+      if (userInstance) {
+        if (isAdmin && !userInstance.isAdmin)
+          return userService.updateUser(userInstance, { isAdmin }).then(adminUser => {
+            const User = userSerializer(adminUser);
+            logger.info(`The user ${JSON.stringify(User)} updated to admin`);
+            res.status(201).send(User);
+          });
+        else throw errors.emailAlreadyExists('The email already exists');
+      }
       const usr = userCreationSerializer(req.body);
       return encryptPassword(usr).then(hashedPassword => {
-        const fields = { ...usr, password: hashedPassword };
+        const fields = { ...usr, password: hashedPassword, isAdmin };
         return userService.create(fields).then(newUser => {
           const User = userSerializer(newUser);
           logger.info(`The user ${JSON.stringify(User)} was successfully created`);
