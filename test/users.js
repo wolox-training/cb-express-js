@@ -1,7 +1,9 @@
 const chai = require('chai'),
   dictum = require('dictum.js'),
   server = require('./../app'),
-  expect = chai.expect;
+  expect = chai.expect,
+  bcrypt = require('bcryptjs'),
+  userService = require('../app/services/userService');
 
 const correctUser = {
   first_name: 'Carlos',
@@ -11,6 +13,11 @@ const correctUser = {
 };
 const missingFieldsUser = { first_name: correctUser.first_name, email: correctUser.email };
 const invalidPassUser = { ...correctUser, password: '!@#$' };
+
+const encryptPassword = ({ password }) => {
+  const salt = bcrypt.genSaltSync();
+  return bcrypt.hash(password, salt);
+};
 
 const createUser = user =>
   chai
@@ -220,6 +227,79 @@ describe('/users GET', () => {
             expect(res).to.have.status(401);
             expect(res.body).to.have.property('message');
             expect(res.body.message).to.include('Invalid token');
+          })
+      )
+    ));
+});
+
+describe('/admin/users POST', () => {
+  const rawAdmin = {
+    firstName: correctUser.first_name,
+    lastName: correctUser.last_name,
+    email: 'admin@wolox.com.ar',
+    password: correctUser.password,
+    isAdmin: true
+  };
+  const correctAdmin = {
+    first_name: rawAdmin.firstName,
+    last_name: rawAdmin.lastName,
+    email: rawAdmin.email,
+    password: rawAdmin.password
+  };
+  beforeEach(() =>
+    encryptPassword(rawAdmin).then(hashedPassword =>
+      userService.create({ ...rawAdmin, password: hashedPassword })
+    )
+  );
+  it('should successfully create an admin after logging in', () =>
+    logIn({ email: correctAdmin.email, password: correctAdmin.password }).then(resp =>
+      chai
+        .request(server)
+        .post('/admin/users')
+        .set({ token: resp.body.token })
+        .send({ ...correctAdmin, email: 'anotherAdmin@wolox.com.ar' })
+        .then(res => {
+          expect(res).to.have.status(201);
+          expect(res).to.be.json;
+        })
+    ));
+  it('should fail to create an admin if not legged in', () =>
+    chai
+      .request(server)
+      .post('/admin/users')
+      .send({ ...correctAdmin, email: 'anotherAdmin@wolox.com.ar' })
+      .then(res => {
+        expect(res).to.have.status(401);
+        expect(res.body).to.have.property('message');
+        expect(res.body.message).to.include('You need to be logged in');
+      }));
+  it('should fail to create an admin if it already exists', () =>
+    logIn({ email: correctAdmin.email, password: correctAdmin.password }).then(resp =>
+      chai
+        .request(server)
+        .post('/admin/users')
+        .set({ token: resp.body.token })
+        .send(correctAdmin)
+        .then(res => {
+          expect(res).to.have.status(400);
+          expect(res.body).to.have.property('message');
+          expect(res.body.message).to.include('The email already exists');
+        })
+    ));
+  it('should upgrade user privileges if already exists', () =>
+    createUser({ ...correctUser, email: 'someUser@wolox.com.ar' }).then(() =>
+      logIn({ email: correctAdmin.email, password: correctAdmin.password }).then(({ body }) =>
+        chai
+          .request(server)
+          .post('/admin/users')
+          .set({ token: body.token })
+          .send({ ...correctUser, email: 'someUser@wolox.com.ar' })
+          .then(res => {
+            expect(res).to.have.status(201);
+            expect(res).to.be.json;
+            expect(res.body).to.have.property('first_name', 'Carlos');
+            expect(res.body).to.have.property('last_name', 'Bollero');
+            expect(res.body).to.have.property('email', 'someUser@wolox.com.ar');
           })
       )
     ));
