@@ -283,7 +283,7 @@ describe('/admin/users POST', () => {
         .then(res => {
           expect(res).to.have.status(400);
           expect(res.body).to.have.property('message');
-          expect(res.body.message).to.include('The email already exists');
+          expect(res.body.message).to.include('The admin already exists');
         })
     ));
   it('should upgrade user privileges if already exists', () =>

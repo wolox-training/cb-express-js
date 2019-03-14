@@ -12,27 +12,43 @@ const encryptPassword = ({ password }) => {
   return bcrypt.hash(password, salt);
 };
 
-exports.create = (isAdmin = false) => (req, res, next) =>
+const sendUser = (usr, res, message) => {
+  const User = userSerializer(usr);
+  logger.info(message);
+  res.status(201).send(User);
+};
+
+const createUser = (usr, isAdmin = false) => {
+  const User = userCreationSerializer(usr);
+  return encryptPassword(User).then(hashedPassword => {
+    const fields = { ...User, password: hashedPassword, isAdmin };
+    return userService.create(fields);
+  });
+};
+
+exports.create = (req, res, next) =>
+  user
+    .findOne({ where: { email: req.body.email } })
+    .then(userInstance => {
+      if (userInstance) throw errors.emailAlreadyExists('The email already exists');
+      createUser(req.body).then(newUser => {
+        sendUser(newUser, res, 'The user was successfully created');
+      });
+    })
+    .catch(next);
+
+exports.createAdmin = (req, res, next) =>
   user
     .findOne({ where: { email: req.body.email } })
     .then(userInstance => {
       if (userInstance) {
-        if (isAdmin && !userInstance.isAdmin)
-          return userService.updateUser(userInstance, { isAdmin }).then(adminUser => {
-            const User = userSerializer(adminUser);
-            logger.info(`The user ${JSON.stringify(User)} updated to admin`);
-            res.status(201).send(User);
-          });
-        else throw errors.emailAlreadyExists('The email already exists');
-      }
-      const usr = userCreationSerializer(req.body);
-      return encryptPassword(usr).then(hashedPassword => {
-        const fields = { ...usr, password: hashedPassword, isAdmin };
-        return userService.create(fields).then(newUser => {
-          const User = userSerializer(newUser);
-          logger.info(`The user ${JSON.stringify(User)} was successfully created`);
-          res.status(201).send(User);
+        if (userInstance.isAdmin) throw errors.emailAlreadyExists('The admin already exists');
+        return userService.updateUser(userInstance, { isAdmin: true }).then(adminUser => {
+          sendUser(adminUser, res, 'The user upgraded to admin');
         });
+      }
+      createUser(req.body).then(newAdmin => {
+        sendUser(newAdmin, res, 'The admin was successfully created');
       });
     })
     .catch(next);
