@@ -31,9 +31,9 @@ exports.create = (req, res, next) =>
     .findOne({ where: { email: req.body.email } })
     .then(userInstance => {
       if (userInstance) throw errors.emailAlreadyExists('The email already exists');
-      createUser(req.body).then(newUser => {
-        sendUser(newUser, res, 'The user was successfully created');
-      });
+      return createUser(req.body).then(newUser =>
+        sendUser(newUser, res, 'The user was successfully created')
+      );
     })
     .catch(next);
 
@@ -43,13 +43,13 @@ exports.createAdmin = (req, res, next) =>
     .then(userInstance => {
       if (userInstance) {
         if (userInstance.isAdmin) throw errors.emailAlreadyExists('The admin already exists');
-        return userService.updateUser(userInstance, { isAdmin: true }).then(adminUser => {
-          sendUser(adminUser, res, 'The user upgraded to admin');
-        });
+        return userService
+          .updateUser(userInstance, { isAdmin: true })
+          .then(adminUser => sendUser(adminUser, res, 'The user upgraded to admin'));
       }
-      createUser(req.body).then(newAdmin => {
-        sendUser(newAdmin, res, 'The admin was successfully created');
-      });
+      return createUser(req.body).then(newAdmin =>
+        sendUser(newAdmin, res, 'The admin was successfully created')
+      );
     })
     .catch(next);
 
