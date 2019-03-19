@@ -13,7 +13,8 @@ const statusCodes = {
   [errors.EMAIL_ALREADY_EXISTS]: 400,
   [errors.INVALID_FIELDS]: 400,
   [errors.CREATION_FAILED]: 400,
-  [errors.INVALID_CREDENTIALS]: 401
+  [errors.INVALID_CREDENTIALS]: 401,
+  [errors.BAD_REQUEST]: 400
 };
 
 exports.handle = (error, req, res, next) => {

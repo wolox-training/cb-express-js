@@ -24,3 +24,8 @@ exports.usersList = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) =>
     .catch(() => {
       throw errors.databaseError('Failed to get users list');
     });
+
+exports.updateUser = (userInstance, fields) =>
+  userInstance.update(fields).catch(() => {
+    throw errors.databaseError('Failed to update user privileges');
+  });

@@ -3,6 +3,6 @@ const request = require('request-promise'),
   errors = require('../errors');
 
 exports.list = () =>
-  request(config.common.albumsUrl).catch(e => {
-    throw errors.defaultError('Internal server error');
+  request({ method: 'GET', url: config.common.albumsUrl, json: true }).catch(e => {
+    throw errors.badRequest('Failed to GET from albums service');
   });

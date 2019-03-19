@@ -15,6 +15,7 @@ exports.handle = (req, res, next) => {
   return User.findOne({ where: { email: decoded.email } })
     .then(user => {
       if (!user) next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
+      req.isAdmin = user.isAdmin;
       next();
     })
     .catch(next);
