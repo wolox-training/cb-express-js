@@ -1,5 +1,7 @@
 const chai = require('chai'),
   server = require('./../app'),
+  config = require('../config'),
+  nock = require('nock'),
   expect = chai.expect;
 
 const correctUser = {
@@ -21,9 +23,30 @@ const logIn = ({ email, password }) =>
     .post('/users/sessions')
     .send({ email, password });
 
+const albums = [
+  {
+    userId: 1,
+    id: 1,
+    title: 'quidem molestiae enim'
+  },
+  {
+    userId: 1,
+    id: 2,
+    title: 'sunt qui excepturi placeat culpa'
+  },
+  {
+    userId: 1,
+    id: 3,
+    title: 'omnis laborum odio'
+  }
+];
+
 describe('/albums GET', () => {
-  it('should successfully get the albums list when logged in', () =>
-    createUser(correctUser).then(() =>
+  it('should successfully get the albums list when logged in', () => {
+    nock('albums.com')
+      .get('/')
+      .reply(200, { albums });
+    return createUser(correctUser).then(() =>
       logIn(correctUser).then(({ body }) =>
         chai
           .request(server)
@@ -35,7 +58,8 @@ describe('/albums GET', () => {
             expect(res.body.albums).to.be.an('array');
           })
       )
-    ));
+    );
+  });
   it('should fail to get the albums if not logged in', () =>
     chai
       .request(server)
