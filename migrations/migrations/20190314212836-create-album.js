@@ -2,17 +2,22 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Albums', {
+    return queryInterface.createTable('albums', {
       id: {
         allowNull: false,
         autoIncrement: true,
-        type: Sequelize.INTEGER
-      },
-      userId: {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      albumId: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      userId: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      albumName: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -26,6 +31,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Albums');
+    return queryInterface.dropTable('albums');
   }
 };

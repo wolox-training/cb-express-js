@@ -2,13 +2,23 @@
 
 module.exports = (sequelize, DataTypes) => {
   const album = sequelize.define(
-    'Album',
+    'album',
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
+      albumId: {
+        allowNull: false,
+        type: DataTypes.INTEGER
+      },
       userId: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      name: {
+      albumName: {
         allowNull: false,
         type: DataTypes.STRING
       }
