@@ -8,5 +8,8 @@ module.exports = {
     NOT_LOGGED_IN: 'You need to be logged in',
     INVALID_TOKEN: 'Invalid token',
     UNAUTHORIZED: 'Unauthorized'
+  },
+  albumsValidation: {
+    ALBUM_ALREADY_PURCHASED: 'The album was already purchased'
   }
 };

@@ -28,3 +28,6 @@ exports.invalidToken = message => internalError(message, exports.INVALID_AUTHENT
 
 exports.BAD_REQUEST = 'bad_request';
 exports.badRequest = message => internalError(message, exports.BAD_REQUEST);
+
+exports.ALBUM_ALREADY_PURCHASED = 'album_already_purchased';
+exports.albumAlreadyPurchased = message => internalError(message, exports.ALBUM_ALREADY_PURCHASED);
