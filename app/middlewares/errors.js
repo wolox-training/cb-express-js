@@ -14,7 +14,8 @@ const statusCodes = {
   [errors.INVALID_FIELDS]: 400,
   [errors.CREATION_FAILED]: 400,
   [errors.INVALID_CREDENTIALS]: 401,
-  [errors.BAD_REQUEST]: 400
+  [errors.BAD_REQUEST]: 400,
+  [errors.ALBUM_ALREADY_PURCHASED]: 400
 };
 
 exports.handle = (error, req, res, next) => {

@@ -5,7 +5,7 @@ const User = require('../models').user,
   jwt = require('jwt-simple');
 
 exports.handle = (req, res, next) => {
-  if (!req.headers.token) next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
+  if (!req.headers.token) return next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
   let decoded;
   try {
     decoded = jwt.decode(req.headers.token, config.common.session.secret);
@@ -14,8 +14,8 @@ exports.handle = (req, res, next) => {
   }
   return User.findOne({ where: { email: decoded.email } })
     .then(user => {
-      if (!user) next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
-      req.isAdmin = user.isAdmin;
+      if (!user) return next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
+      req.user = user;
       next();
     })
     .catch(next);
