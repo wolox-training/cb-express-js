@@ -16,6 +16,7 @@ exports.handle = (req, res, next) => {
     .then(user => {
       if (!user) return next(errors.invalidAuthentication(authValidation.NOT_LOGGED_IN));
       req.user = user;
+      req.isAdmin = user.isAdmin;
       next();
     })
     .catch(next);
