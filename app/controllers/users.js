@@ -15,7 +15,7 @@ const encryptPassword = ({ password }) => {
 const sendUser = (usr, res, message) => {
   const User = userSerializer(usr);
   logger.info(message);
-  return res.status(201).send(User);
+  res.status(201).send(User);
 };
 
 const createUser = (usr, isAdmin = false) => {
