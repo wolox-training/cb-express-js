@@ -15,7 +15,8 @@ const statusCodes = {
   [errors.CREATION_FAILED]: 400,
   [errors.INVALID_CREDENTIALS]: 401,
   [errors.BAD_REQUEST]: 400,
-  [errors.ALBUM_ALREADY_PURCHASED]: 400
+  [errors.ALBUM_ALREADY_PURCHASED]: 400,
+  [errors.UNAUTHORIZED]: 400
 };
 
 exports.handle = (error, req, res, next) => {

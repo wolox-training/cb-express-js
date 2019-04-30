@@ -4,6 +4,7 @@ const users = require('./controllers/users'),
   authValidator = require('./middlewares/authValidator').handle,
   adminValidator = require('./middlewares/authValidator').handle,
   albumPurchaseValidator = require('./middlewares/albumPurchaseValidator').handle,
+  userAlbumsListValidator = require('./middlewares/userAlbumsListValidator').handle,
   { userCreationSchema, userLoginSchema } = require('./schemas/user');
 
 const forAdmin = true;
@@ -19,4 +20,5 @@ exports.init = app => {
   );
   app.get('/albums', authValidator, albums.list);
   app.post('/albums/:id', [authValidator, albumPurchaseValidator], albums.purchase);
+  app.get('/users/:user_id/albums', [authValidator, userAlbumsListValidator], albums.userAlbumList);
 };

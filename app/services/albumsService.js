@@ -17,3 +17,8 @@ exports.purchase = newAlbum =>
   album.create(newAlbum).catch(error => {
     throw errors.databaseError('Failed to create album');
   });
+
+exports.userAlbumList = userId =>
+  album.findAll({ where: { userId: Number(userId) } }).catch(() => {
+    throw errors.databaseError('Failed to query albums');
+  });

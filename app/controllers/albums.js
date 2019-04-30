@@ -21,3 +21,9 @@ exports.purchase = (req, res, next) =>
       });
     })
     .catch(next);
+
+exports.userAlbumList = (req, res, next) =>
+  albumsService.userAlbumList(req.params.user_id).then(albums => {
+    logger.info('Albums request succeeded');
+    res.status(200).send({ albums });
+  });

@@ -31,3 +31,6 @@ exports.badRequest = message => internalError(message, exports.BAD_REQUEST);
 
 exports.ALBUM_ALREADY_PURCHASED = 'album_already_purchased';
 exports.albumAlreadyPurchased = message => internalError(message, exports.ALBUM_ALREADY_PURCHASED);
+
+exports.UNAUTHORIZED = 'unauthorized';
+exports.unauthorized = message => internalError(message, exports.UNAUTHORIZED);
