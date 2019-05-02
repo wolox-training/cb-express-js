@@ -10,7 +10,7 @@ exports.list = () =>
 
 exports.getAlbum = id =>
   request({ method: 'GET', uri: `${albumsUrl}/${id}`, json: true }).catch(e => {
-    throw errors.badRequest('Failed to the album from albums service');
+    throw errors.badRequest('Failed to get the album from albums service');
   });
 
 exports.purchase = newAlbum =>
