@@ -7,6 +7,7 @@ exports.config = {
     },
     session: {
       secret: 'some-super-secret'
-    }
+    },
+    albumsUrl: 'http://albums.com'
   }
 };

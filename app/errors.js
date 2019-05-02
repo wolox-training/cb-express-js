@@ -25,3 +25,6 @@ exports.INVALID_AUTHENTICATION = 'invalid_authentication';
 exports.invalidAuthentication = message => internalError(message, exports.INVALID_AUTHENTICATION);
 
 exports.invalidToken = message => internalError(message, exports.INVALID_AUTHENTICATION);
+
+exports.BAD_REQUEST = 'bad_request';
+exports.badRequest = message => internalError(message, exports.BAD_REQUEST);

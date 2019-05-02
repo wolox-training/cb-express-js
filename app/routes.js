@@ -1,4 +1,5 @@
 const users = require('./controllers/users'),
+  albums = require('./controllers/albums'),
   fieldsValidator = require('./middlewares/fieldsValidator').handle,
   authValidator = require('./middlewares/authValidator').handle,
   adminValidator = require('./middlewares/authValidator').handle,
@@ -15,4 +16,5 @@ exports.init = app => {
     [authValidator, adminValidator, fieldsValidator(userCreationSchema)],
     users.createAdmin
   );
+  app.get('/albums', authValidator, albums.list);
 };
