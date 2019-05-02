@@ -1,6 +1,5 @@
 const chai = require('chai'),
   server = require('./../app'),
-  config = require('../config'),
   nock = require('nock'),
   expect = chai.expect;
 
@@ -42,11 +41,13 @@ const albums = [
 ];
 
 describe('/albums GET', () => {
-  it('should successfully get the albums list when logged in', () => {
+  before(() => {
     nock('http://albums.com')
       .get('/')
       .reply(200, albums);
-    return createUser(correctUser).then(() =>
+  });
+  it('should successfully get the albums list when logged in', () =>
+    createUser(correctUser).then(() =>
       logIn(correctUser).then(({ body }) =>
         chai
           .request(server)
@@ -58,8 +59,7 @@ describe('/albums GET', () => {
             expect(res.body.albums).to.be.an('array');
           })
       )
-    );
-  });
+    ));
   it('should fail to get the albums if not logged in', () =>
     chai
       .request(server)
@@ -73,22 +73,57 @@ describe('/albums GET', () => {
 });
 
 describe('/albums/:id POST', () => {
-  it('should successfully purchase an album if logged in and does not have it already', () => {
-    beforeEach(() => {
-      createUser(correctUser);
-      nock('http://albums.com')
-        .get('/')
-        .reply(200, albums);
-    });
-    return logIn(correctUser).then(({ body: { id, token } }) =>
-      chai
-        .request(server)
-        .post(`/albums/${id}`)
-        .set({ token })
-        .send()
-        .then(res => {
-          expect(res).to.have.status(200);
-        })
-    );
+  beforeEach(() => {
+    nock('http://albums.com')
+      .get('/1')
+      .reply(200, albums[0]);
   });
+  it('should successfully purchase an album if logged in and does not have it already', () =>
+    createUser(correctUser).then(() =>
+      logIn(correctUser).then(({ body: { token } }) =>
+        chai
+          .request(server)
+          .post('/albums/1')
+          .set({ token })
+          .send()
+          .then(res => {
+            expect(res).to.have.status(201);
+            expect(res.body).to.have.property('albumId');
+            expect(res.body).to.have.property('albumName');
+            expect(res.body).to.have.property('userId');
+          })
+      )
+    ));
+  it('should fail to purchase an album if logged in but already bought it', () =>
+    createUser(correctUser).then(() =>
+      logIn(correctUser).then(({ body: { token } }) =>
+        chai
+          .request(server)
+          .post('/albums/1')
+          .set({ token })
+          .send()
+          .then(() =>
+            chai
+              .request(server)
+              .post('/albums/1')
+              .set({ token })
+              .send()
+              .then(res => {
+                expect(res).to.have.status(400);
+                expect(res.body).to.have.property('message');
+                expect(res.body.message).to.include('The album was already purchased');
+              })
+          )
+      )
+    ));
+  it('should fail to purchase an album if not logged in', () =>
+    chai
+      .request(server)
+      .post('/albums/1')
+      .send()
+      .then(res => {
+        expect(res).to.have.status(401);
+        expect(res.body).to.have.property('message');
+        expect(res.body.message).to.include('You need to be logged in');
+      }));
 });
