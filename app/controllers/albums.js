@@ -1,5 +1,6 @@
 const albumsService = require('../services/albumsService'),
-  logger = require('../logger');
+  logger = require('../logger'),
+  { albumSerializer } = require('../serializers/albumSerializer');
 
 exports.list = (req, res, next) =>
   albumsService
@@ -17,7 +18,7 @@ exports.purchase = (req, res, next) =>
       const newAlbum = { userId: req.user.id, albumId: alb.id, albumName: alb.title };
       albumsService.purchase(newAlbum).then(createdAlbum => {
         logger.info(`Album "${newAlbum.albumName}" purchased successfully`);
-        return res.status(201).send(createdAlbum);
+        return res.status(201).send(albumSerializer(createdAlbum));
       });
     })
     .catch(next);

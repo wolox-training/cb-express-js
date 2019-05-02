@@ -88,9 +88,9 @@ describe('/albums/:id POST', () => {
           .send()
           .then(res => {
             expect(res).to.have.status(201);
-            expect(res.body).to.have.property('albumId');
-            expect(res.body).to.have.property('albumName');
-            expect(res.body).to.have.property('userId');
+            expect(res.body).to.have.property('album_id');
+            expect(res.body).to.have.property('album_name');
+            expect(res.body).to.have.property('user_id');
           })
       )
     ));
