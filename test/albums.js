@@ -71,3 +71,24 @@ describe('/albums GET', () => {
         expect(res.body.message).to.include('You need to be logged in');
       }));
 });
+
+describe('/albums/:id POST', () => {
+  it('should successfully purchase an album if logged in and does not have it already', () => {
+    beforeEach(() => {
+      createUser(correctUser);
+      nock('http://albums.com')
+        .get('/')
+        .reply(200, albums);
+    });
+    return logIn(correctUser).then(({ body: { id, token } }) =>
+      chai
+        .request(server)
+        .post(`/albums/${id}`)
+        .set({ token })
+        .send()
+        .then(res => {
+          expect(res).to.have.status(200);
+        })
+    );
+  });
+});
