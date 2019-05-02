@@ -1,8 +1,8 @@
 const request = require('request-promise'),
-  config = require('../../config'),
+  albumsUrl = require('../../config').common.albumsUrl,
   errors = require('../errors');
 
 exports.list = () =>
-  request({ method: 'GET', url: config.common.albumsUrl, json: true }).catch(e => {
+  request({ method: 'GET', uri: albumsUrl, json: true }).catch(e => {
     throw errors.badRequest('Failed to GET from albums service');
   });

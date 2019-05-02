@@ -43,9 +43,9 @@ const albums = [
 
 describe('/albums GET', () => {
   it('should successfully get the albums list when logged in', () => {
-    nock('albums.com')
+    nock('http://albums.com')
       .get('/')
-      .reply(200, { albums });
+      .reply(200, albums);
     return createUser(correctUser).then(() =>
       logIn(correctUser).then(({ body }) =>
         chai
