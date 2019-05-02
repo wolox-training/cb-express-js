@@ -127,3 +127,46 @@ describe('/albums/:id POST', () => {
         expect(res.body.message).to.include('You need to be logged in');
       }));
 });
+
+describe('/users/:id/albums GET', () => {
+  beforeEach(() =>
+    nock('http://albums.com')
+      .get('/1')
+      .reply(200, albums[0])
+      .get('/2')
+      .reply(200, albums[1])
+  );
+  it('should get user albums', () =>
+    createUser(correctUser).then(() =>
+      logIn(correctUser).then(({ body: { token } }) =>
+        chai
+          .request(server)
+          .post('/albums/1')
+          .set({ token })
+          .send()
+          .then(() =>
+            chai
+              .request(server)
+              .post('/albums/2')
+              .set({ token })
+              .send()
+              .then(() =>
+                chai
+                  .request(server)
+                  .get('/users/1/albums')
+                  .set({ token })
+                  .send()
+                  .then(res => {
+                    expect(res).to.have.status(200);
+                    expect(res.body.albums).to.be.an('array');
+                    expect(res.body.albums).to.not.be.empty;
+                    expect(res.body.albums).to.have.lengthOf(2);
+                    res.body.albums.forEach(album =>
+                      expect(album).to.have.keys(['user_id', 'album_id', 'album_name'])
+                    );
+                  })
+              )
+          )
+      )
+    ));
+});
